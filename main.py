@@ -1,26 +1,31 @@
 from langchain.chat_models import init_chat_model
-from interacive_agent import ToolCallingAgent
+from interacive_agent import InteractiveToolCallingAgent
 
 
 def main():
     # Initialize the LLM
     llm = init_chat_model(model="gemini-2.5-flash", model_provider="google_genai")
     
-    # Create the agent
-    agent = ToolCallingAgent(llm)
+    # Create the interactive agent
+    agent = InteractiveToolCallingAgent(llm)
     
-    # Test queries
-    queries = [
- #       "What is 3 + 5?",
- #       "What is 10 - 4?",
- #       "What is 6 * 7?",
-        "How much should I tip on $60 at 20%?"
-    ]
+    print("=" * 50)
+    print("🤖 Interactive Tool-Calling Agent")
+    print("=" * 50)
+    print("Type your questions. Type 'quit' to exit.\n")
     
-    for query in queries:
-        print(f"\nQuery: {query}")
+    while True:
+        query = input("You: ").strip()
+        
+        if not query:
+            continue
+        
+        if query.lower() in ('quit', 'exit', 'q'):
+            print("Goodbye! 👋")
+            break
+        
         result = agent.run(query)
-        print(f"Answer: {result}")
+        print(f"\n🤖 Agent: {result}\n")
 
 
 if __name__ == "__main__":
