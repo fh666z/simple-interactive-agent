@@ -6,6 +6,30 @@ from langchain_core.prompts import ChatPromptTemplate
 from tools import tools, tool_map
 
 
+def extract_text_content(content) -> str:
+    """
+    Extract text from LLM response content.
+    
+    Handles both plain strings and list of content blocks
+    (e.g., [{'type': 'text', 'text': '...'}]).
+    """
+    if isinstance(content, str):
+        return content
+    
+    if isinstance(content, list):
+        # Extract text from content blocks
+        texts = []
+        for block in content:
+            if isinstance(block, dict) and block.get('type') == 'text':
+                texts.append(block.get('text', ''))
+            elif isinstance(block, str):
+                texts.append(block)
+        return ''.join(texts)
+    
+    # Fallback: convert to string
+    return str(content)
+
+
 class ToolCallingAgent:
     """Original autonomous agent (no confirmations)."""
     
@@ -18,7 +42,7 @@ class ToolCallingAgent:
 
         response = self.llm_with_tools.invoke(chat_history)
         if not response.tool_calls:
-            return response.content
+            return extract_text_content(response.content)
         
         tool_call = response.tool_calls[0]
         tool_name = tool_call["name"]
@@ -31,7 +55,7 @@ class ToolCallingAgent:
         chat_history.extend([response, tool_message])
 
         final_response = self.llm_with_tools.invoke(chat_history)
-        return final_response.content
+        return extract_text_content(final_response.content)
 
 
 class InteractiveToolCallingAgent:
@@ -53,7 +77,7 @@ class InteractiveToolCallingAgent:
             
             # If no tool calls, we're done - return final response
             if not response.tool_calls:
-                return response.content
+                return extract_text_content(response.content)
             
             step += 1
             tool_call = response.tool_calls[0]
@@ -159,7 +183,7 @@ class InteractiveToolCallingAgent:
         # Get LLM response without tool binding
         llm_without_tools = self.llm_with_tools.bound  # Get the base LLM
         final_response = llm_without_tools.invoke(chat_history)
-        return final_response.content
+        return extract_text_content(final_response.content)
 
     def _format_args(self, args: dict) -> str:
         """Format tool arguments for display."""
