@@ -27,6 +27,11 @@ def multiply(a: int, b: int) -> int:
     """Multiply a and b."""
     return a * b
 
+@tool
+def calculate_tip(total_bill: float, tip_percentage: float) -> float:
+    """Calculate the tip for a given total bill and tip percentage."""
+    return total_bill * (tip_percentage / 100)
+
 
 # List of all tools
 tools = [add, subtract, multiply]

@@ -11,9 +11,10 @@ def main():
     
     # Test queries
     queries = [
-        "What is 3 + 5?",
-        "What is 10 - 4?",
-        "What is 6 * 7?",
+ #       "What is 3 + 5?",
+ #       "What is 10 - 4?",
+ #       "What is 6 * 7?",
+        "How much should I tip on $60 at 20%?"
     ]
     
     for query in queries:
